@@ -1,6 +1,8 @@
 package ihandy.com.a2014011300;
 
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,38 +35,51 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<News> newsList=new ArrayList<News>();
+    private ArrayList<ArrayList<News>> newsList=new ArrayList<ArrayList<News>>();
     private List<String> categoryList=new ArrayList<String>();
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ViewPageAdapter viewPageAdapter;
+    private ArrayList<NewsListFragment> newsFragmentList;
+    private ArrayList<Fragment> fragmentList;
+    public FragmentManager fManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_main);
+
         //init the categories and news
+        initCate();
+        Log.d("progress:", "init News");
         initNews();
         //get the tabLayout
         initTabLayout();
+        initViewPage();
 
-        NewsAdapter adapter = new NewsAdapter(MainActivity.this, R.layout.news_item, newsList);
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                News tmp = newsList.get(position);
-                String data = tmp.getNewsID() + ".html";
-                Intent intent = new Intent(MainActivity.this, ShowPageActivity.class);
-                intent.putExtra("filename", data);
-                startActivity(intent);
-            }
-        });
         //getSupportActionBar().hide();
 
     }
+    //get the category order in the List
+    public int getCateOrder(String x)
+    {
+        switch (x) {
+            case "top_stories": return 0;
+            case "technology":return 1;
+            case "national":return 2;
+            case "sports":return 3;
+            case "health":return 4;
+            case "world":return 5;
+            case "more top stories":return 6;
+            case "entertainment": return 7;
+            case "business":return 8;
+            case "science":return 9;
+            default:break;
+        }
+        return 0;
+    }
 
-    public void initNews()
+    public void initCate()
     {
         //get categories
         CateThread myThread=new CateThread();
@@ -75,11 +90,25 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         categoryList=myThread.categoryList;
+    }
 
-        for(int i=1;i<51;i++)
+    public void initNews()
+    {
+
+        for(int i=0;i<categoryList.size();i++)
         {
-            newsList.add(new News(i,"News "+i,"","","",i));
+            NewsThread myThread = new NewsThread();
+            myThread.setStatus(categoryList.get(i),true,0);
+            myThread.start();
+            try {
+                myThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            newsList.add(myThread.getNewsList());
+
         }
+
     }
 
     public void initTabLayout()
@@ -90,7 +119,29 @@ public class MainActivity extends AppCompatActivity {
             Log.d("tab:", "" + categoryList.get(i));
             tabLayout.addTab(tmpTab);
         }
+
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+    }
+
+    public void initViewPage()
+    {
+        fManager=getSupportFragmentManager();
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.vp_pager);
+        newsFragmentList=new ArrayList<NewsListFragment>();
+        fragmentList=new ArrayList<Fragment>();
+        for(int i=0;i<categoryList.size();i++)
+        {
+
+            NewsListFragment tmp=new NewsListFragment();
+            tmp.setNewsList(newsList.get(i));
+            //Log.d("newsList "+i,newsList.get(i).get(0).getCategory());
+            newsFragmentList.add(tmp);
+            fragmentList.add(newsFragmentList.get(i));
+        }
+        viewPageAdapter=new ViewPageAdapter(fManager,fragmentList,categoryList);
+        viewPager.setAdapter(viewPageAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override

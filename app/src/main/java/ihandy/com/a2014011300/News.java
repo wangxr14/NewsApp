@@ -4,26 +4,26 @@ package ihandy.com.a2014011300;
  * Created by ok on 2016/9/3.
  */
 public class News {
-    private int news_ID;
+    private long news_ID;
     private String title;
     private String category;
     private String origin;
     private String source_url;
-    private int imageID;
+    private String image_url;
 
-    public News(int news_ID,String title, String category, String origin,String source_url,int imageID) {
+    public News(long news_ID,String title, String category, String origin,String source_url,String image_url) {
         this.news_ID=news_ID;
         this.title = title;
         this.category = category;
         this.origin=origin;
         this.source_url=source_url;
-        this.imageID = imageID;
+        this.image_url = image_url;
     }
 
-    public void setNews_ID(int news_ID){
+    public void setNews_ID(long news_ID){
         this.news_ID=news_ID;
     }
-    public int getNewsID() {
+    public long getNewsID() {
         return news_ID;
     }
     public void setCategory(String category){
@@ -50,10 +50,10 @@ public class News {
     public String getSource_url() {
         return source_url;
     }
-    public void setImageID(int imageID){
-        this.imageID=imageID;
+    public void setImage_url(String image_url){
+        this.image_url=image_url;
     }
-    public int getImageID() {
-        return imageID;
+    public String getImage_url() {
+        return image_url;
     }
 }

@@ -19,6 +19,6 @@ public class ShowPageActivity extends AppCompatActivity {
         webView=(WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("http://www.baidu.com");
+        webView.loadUrl(filename);
     }
 }
