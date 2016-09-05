@@ -3,6 +3,7 @@
     package="ihandy.com.a2014011300">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,8 +19,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Option1Activity" />
-        <activity android:name=".ShowPageActivity"></activity>
-
+        <activity android:name=".ShowPageActivity" />
+        <activity android:name=".AboutActivity" />
+        <activity android:name=".SetCategoryActivity"></activity>
     </application>
-<uses-permission android:name="android.permission.INTERNET"/>
+
 </manifest>

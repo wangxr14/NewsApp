@@ -1,5 +1,6 @@
 package ihandy.com.a2014011300;
 
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.drawer_layout);
 
         //init the categories and news
         initCate();
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         //get the tabLayout
         initTabLayout();
         initViewPage();
-
+        setDrawer();
         //getSupportActionBar().hide();
 
     }
@@ -142,6 +143,32 @@ public class MainActivity extends AppCompatActivity {
         viewPageAdapter=new ViewPageAdapter(fManager,fragmentList,categoryList);
         viewPager.setAdapter(viewPageAdapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    public void setDrawer()
+    {
+        //设置导航栏NavigationView的点击事件
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                switch (menuItem.getItemId())
+                {
+                    case R.id.drawer_favorite_Item01:
+
+                        break;
+                    case R.id.drawer_set_cate_Item02:
+                        break;
+                    case R.id.drawer_about_Item03:
+                        Intent intent = new Intent(MainActivity.this,AboutActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+                //menuItem.setChecked(true);//点击了把它设为选中状态
+                //mDrawerLayout.closeDrawers();//关闭抽屉
+                return true;
+            }
+        });
     }
 
     @Override
