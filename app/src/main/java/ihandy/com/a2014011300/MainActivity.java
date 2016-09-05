@@ -36,8 +36,12 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<ArrayList<News>> newsList=new ArrayList<ArrayList<News>>();
-    private List<String> categoryList=new ArrayList<String>();
+    //private ArrayList<ArrayList<News>> newsList=new ArrayList<ArrayList<News>>();
+    private Map<String,ArrayList<News>> newsMap=new HashMap<String,ArrayList<News>>();
+    private ArrayList<String> categoryList=new ArrayList<String>();
+    private ArrayList<String> watchedCateList=new ArrayList<String>();
+    private ArrayList<String> unwatchedCateList=new ArrayList<String>();
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPageAdapter viewPageAdapter;
@@ -50,34 +54,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
 
+
         //init the categories and news
         initCate();
+        initLists();
         Log.d("progress:", "init News");
         initNews();
         //get the tabLayout
-        initTabLayout();
+        setTabLayout();
         initViewPage();
         setDrawer();
         //getSupportActionBar().hide();
 
-    }
-    //get the category order in the List
-    public int getCateOrder(String x)
-    {
-        switch (x) {
-            case "top_stories": return 0;
-            case "technology":return 1;
-            case "national":return 2;
-            case "sports":return 3;
-            case "health":return 4;
-            case "world":return 5;
-            case "more top stories":return 6;
-            case "entertainment": return 7;
-            case "business":return 8;
-            case "science":return 9;
-            default:break;
-        }
-        return 0;
     }
 
     public void initCate()
@@ -90,9 +78,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        categoryList=myThread.categoryList;
+        categoryList=myThread.getCategoryList();
     }
-
+    public void initLists()
+    {
+        for(int i=0;i<categoryList.size();++i)
+        {
+            watchedCateList.add(categoryList.get(i));
+        }
+    }
     public void initNews()
     {
 
@@ -106,18 +100,17 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            newsList.add(myThread.getNewsList());
-
+            newsMap.put(categoryList.get(i), myThread.getNewsList());
         }
 
     }
 
-    public void initTabLayout()
+    public void setTabLayout()
     {
         tabLayout=(TabLayout) findViewById(R.id.tab_title);
-        for (int i=0;categoryList.size()>i;i++){
-            TabLayout.Tab tmpTab = tabLayout.newTab().setText(categoryList.get(i));
-            Log.d("tab:", "" + categoryList.get(i));
+        for (int i=0;watchedCateList.size()>i;i++){
+            TabLayout.Tab tmpTab = tabLayout.newTab().setText(watchedCateList.get(i));
+            Log.d("tab:", "" + watchedCateList.get(i));
             tabLayout.addTab(tmpTab);
         }
 
@@ -131,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.vp_pager);
         newsFragmentList=new ArrayList<NewsListFragment>();
         fragmentList=new ArrayList<Fragment>();
-        for(int i=0;i<categoryList.size();i++)
+        for(int i=0;i<watchedCateList.size();i++)
         {
 
             NewsListFragment tmp=new NewsListFragment();
-            tmp.setNewsList(newsList.get(i));
+            tmp.setNewsList(newsMap.get(watchedCateList.get(i)));
             //Log.d("newsList "+i,newsList.get(i).get(0).getCategory());
             newsFragmentList.add(tmp);
             fragmentList.add(newsFragmentList.get(i));
@@ -152,16 +145,19 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId())
-                {
+                switch (menuItem.getItemId()) {
                     case R.id.drawer_favorite_Item01:
 
                         break;
                     case R.id.drawer_set_cate_Item02:
+                        Intent intent2=new Intent(MainActivity.this,SetCategoryActivity.class);
+                        intent2.putExtra("category list",categoryList);
+                        intent2.putExtra("watched list",watchedCateList);
+                        startActivity(intent2);
                         break;
                     case R.id.drawer_about_Item03:
-                        Intent intent = new Intent(MainActivity.this,AboutActivity.class);
-                        startActivity(intent);
+                        Intent intent3 = new Intent(MainActivity.this, AboutActivity.class);
+                        startActivity(intent3);
                         break;
                 }
                 //menuItem.setChecked(true);//点击了把它设为选中状态
@@ -170,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

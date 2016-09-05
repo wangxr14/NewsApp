@@ -19,7 +19,13 @@ import java.util.List;
  * Created by ok on 2016/9/4.
  */
 public class CateThread extends Thread {
-    public List<String> categoryList=new ArrayList<String>();
+    private ArrayList<String> categoryList=new ArrayList<String>();
+
+    public ArrayList<String> getCategoryList()
+    {
+        return categoryList;
+    }
+
     public void run()
     {
         long time=System.currentTimeMillis();
