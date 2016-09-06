@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,12 +19,13 @@ public class NewsListFragment extends Fragment implements AdapterView.OnItemClic
     private ListView newsListView;
     private List<News> newsList;
     private NewsAdapter adapter;
+    private ArrayList<News> favoriteList;
 
     public void setNewsList(List<News> newsList)
     {
         this.newsList=newsList;
     }
-
+    public void setFavoriteList(ArrayList<News> favoriteList){this.favoriteList=favoriteList;}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -43,7 +45,10 @@ public class NewsListFragment extends Fragment implements AdapterView.OnItemClic
         String data =tmp.getSource_url();
         Intent intent = new Intent(getActivity(),ShowPageActivity.class);
         intent.putExtra("filename", data);
-        startActivity(intent);
+        boolean isFavorite=favoriteList.contains(tmp);
+        intent.putExtra("favorite",isFavorite);
+
+        startActivityForResult(intent,2);
     }
 
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> categoryList=new ArrayList<String>();
     private ArrayList<String> watchedCateList=new ArrayList<String>();
     private ArrayList<String> unwatchedCateList=new ArrayList<String>();
+    private ArrayList<News> favoritesList=new ArrayList<News>();
 
+    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPageAdapter viewPageAdapter;
@@ -53,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
+        //getSupportActionBar().hide();
+        toolbar= (Toolbar) findViewById(R.id.toolbar_main);
 
-
+        setSupportActionBar(toolbar);
         //init the categories and news
         initCate();
         initLists();
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setTabLayout();
         setViewPage();
         setDrawer();
-        //getSupportActionBar().hide();
+        //
 
     }
 
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         {
             NewsListFragment tmp=new NewsListFragment();
             tmp.setNewsList(newsMap.get(watchedCateList.get(i)));
+            tmp.setFavoriteList(favoritesList);
             //Log.d("newsList "+i,newsList.get(i).get(0).getCategory());
             newsFragmentList.add(tmp);
             fragmentList.add(newsFragmentList.get(i));
@@ -178,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
     {
         switch (requestCode)
         {
+            //change the category
             case 1:
                 if(resultCode==RESULT_OK)
                 {
@@ -186,12 +193,18 @@ public class MainActivity extends AppCompatActivity {
                     setViewPage();
                 }
                 break;
+            //update favorites
+            case 2:
+                if(requestCode==RESULT_OK)
+                {
+
+                }
             default:
                 break;
         }
     }
 
-    @Override
+ /*   @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -213,6 +226,6 @@ public class MainActivity extends AppCompatActivity {
             default:
         }
         return true;
-    }
+    }*/
 
 }
