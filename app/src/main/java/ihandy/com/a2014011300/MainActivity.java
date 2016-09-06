@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPageAdapter viewPageAdapter;
     private ArrayList<NewsListFragment> newsFragmentList;
     private ArrayList<Fragment> fragmentList;
-    public FragmentManager fManager;
+    //public FragmentManager fManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         initNews();
         //get the tabLayout
         setTabLayout();
-        initViewPage();
+        setViewPage();
         setDrawer();
         //getSupportActionBar().hide();
 
@@ -107,7 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setTabLayout()
     {
+
         tabLayout=(TabLayout) findViewById(R.id.tab_title);
+        tabLayout.removeAllTabs();
         for (int i=0;watchedCateList.size()>i;i++){
             TabLayout.Tab tmpTab = tabLayout.newTab().setText(watchedCateList.get(i));
             Log.d("tab:", "" + watchedCateList.get(i));
@@ -117,24 +119,27 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
-    public void initViewPage()
+    public void setViewPage()
     {
-        fManager=getSupportFragmentManager();
+        FragmentManager fManager=getSupportFragmentManager();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.vp_pager);
         newsFragmentList=new ArrayList<NewsListFragment>();
         fragmentList=new ArrayList<Fragment>();
+
         for(int i=0;i<watchedCateList.size();i++)
         {
-
             NewsListFragment tmp=new NewsListFragment();
             tmp.setNewsList(newsMap.get(watchedCateList.get(i)));
             //Log.d("newsList "+i,newsList.get(i).get(0).getCategory());
             newsFragmentList.add(tmp);
             fragmentList.add(newsFragmentList.get(i));
         }
-        viewPageAdapter=new ViewPageAdapter(fManager,fragmentList,categoryList);
+
+        viewPageAdapter=new ViewPageAdapter(fManager,fragmentList,watchedCateList);
+
         viewPager.setAdapter(viewPageAdapter);
+
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -150,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.drawer_set_cate_Item02:
-                        Intent intent2=new Intent(MainActivity.this,SetCategoryActivity.class);
-                        intent2.putExtra("category list",categoryList);
-                        intent2.putExtra("watched list",watchedCateList);
-                        startActivity(intent2);
+                        Intent intent2 = new Intent(MainActivity.this, SetCategoryActivity.class);
+                        intent2.putExtra("category list", categoryList);
+                        intent2.putExtra("watched list", watchedCateList);
+                        startActivityForResult(intent2, 1);
                         break;
                     case R.id.drawer_about_Item03:
                         Intent intent3 = new Intent(MainActivity.this, AboutActivity.class);
@@ -167,6 +172,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data)
+    {
+        switch (requestCode)
+        {
+            case 1:
+                if(resultCode==RESULT_OK)
+                {
+                    this.watchedCateList=data.getStringArrayListExtra("watchedList");
+                    setTabLayout();
+                    setViewPage();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

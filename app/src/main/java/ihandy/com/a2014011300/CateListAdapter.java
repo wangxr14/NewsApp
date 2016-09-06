@@ -30,8 +30,8 @@ public class CateListAdapter extends ArrayAdapter<String> {
         View view= LayoutInflater.from(getContext()).inflate(resourceId, null);
         TextView cateText=(TextView)view.findViewById(R.id.cate_text);
         ImageView imageView=(ImageView)view.findViewById(R.id.cate_img);
-        if(watchedCateList.contains(cate)) imageView.setImageResource(R.drawable.ic_done_black_24dp);
-        else imageView.setImageBitmap(null);
+        if(watchedCateList.contains(cate)) imageView.setImageResource(R.drawable.selected);
+        else imageView.setImageResource(R.drawable.not_selected);
         cateText.setText(cate);
         return view;
     }

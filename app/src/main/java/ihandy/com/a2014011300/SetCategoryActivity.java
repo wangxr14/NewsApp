@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -28,19 +29,25 @@ public class SetCategoryActivity extends AppCompatActivity {
         }
         cateListAdapter1=new CateListAdapter(SetCategoryActivity.this,R.layout.cate_item,categoryList);
         cateListAdapter1.watchedCateList=watchedCateList;
-        ListView listView1=(ListView) findViewById(R.id.set_watched_view);
+        final ListView listView1=(ListView) findViewById(R.id.set_watched_view);
         listView1.setAdapter(cateListAdapter1);
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String tmp = categoryList.get(position);
+                Log.d("str",tmp);
+
+                ImageView imageView=(ImageView)listView1.getChildAt((int)id).findViewById(R.id.cate_img);
+                Log.d("id",""+id);
                 if(watchedCateList.contains(tmp))
                 {
                     watchedCateList.remove(tmp);
+                    imageView.setImageResource(R.drawable.not_selected);
                 }
                 else
                 {
                     watchedCateList.add(tmp);
+                    imageView.setImageResource(R.drawable.selected);
                 }
                 cateListAdapter1.watchedCateList=watchedCateList;
                 for(String i:watchedCateList)
@@ -50,4 +57,15 @@ public class SetCategoryActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent=new Intent();
+        intent.putExtra("watchedList",watchedCateList);
+        setResult(RESULT_OK, intent);
+        Log.d("send","ok");
+        finish();
+    }
+
 }
