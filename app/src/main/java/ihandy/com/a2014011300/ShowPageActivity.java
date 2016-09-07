@@ -15,6 +15,8 @@ public class ShowPageActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private WebView webView;
     private boolean isFavorite=false;
+    private String category;
+    private int position;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,14 +27,13 @@ public class ShowPageActivity extends AppCompatActivity {
         Intent intent=getIntent();
         String filename=intent.getStringExtra("filename");
         isFavorite=intent.getBooleanExtra("favorite",false);
+        category=intent.getStringExtra("category");
+        position=intent.getIntExtra("position",0);
+
         webView=(WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-
         webView.setWebViewClient(new WebViewClient());
-        Log.d("filename", filename);
-        webView.loadUrl("file:///android_asset/test.html");
-        Log.d("load", "ok");
+        webView.loadUrl(filename);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -69,5 +70,17 @@ public class ShowPageActivity extends AppCompatActivity {
         return  true;
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(ShowPageActivity.this,MainActivity.class);
+        intent.putExtra("favorite",isFavorite);
+        intent.putExtra("category",category);
+        intent.putExtra("position",position);
+        setResult(RESULT_OK, intent);
+        Log.d("Intent", category + " " + position);
+        Log.d("intent","sent!");
+        finish();
+    }
 
 }

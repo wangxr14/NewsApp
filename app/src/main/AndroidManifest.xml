@@ -21,7 +21,8 @@
         <activity android:name=".Option1Activity" />
         <activity android:name=".ShowPageActivity" />
         <activity android:name=".AboutActivity" />
-        <activity android:name=".SetCategoryActivity"></activity>
+        <activity android:name=".SetCategoryActivity" />
+        <activity android:name=".FavoritePageActivity"></activity>
     </application>
 
 </manifest>

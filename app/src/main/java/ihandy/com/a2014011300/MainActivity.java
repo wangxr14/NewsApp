@@ -1,9 +1,11 @@
 package ihandy.com.a2014011300;
 
+import android.content.IntentFilter;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<NewsListFragment> newsFragmentList;
     private ArrayList<Fragment> fragmentList;
     //public FragmentManager fManager;
-
+    private IntentFilter intentFilter;
+    private MyBroadcastReceiver myBroadcastReceiver;
+    private LocalBroadcastManager localBroadcastManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +73,14 @@ public class MainActivity extends AppCompatActivity {
         setTabLayout();
         setViewPage();
         setDrawer();
+        Log.d("activity",MainActivity.this.toString());
         //
-
+       /* localBroadcastManager=LocalBroadcastManager.getInstance(this);
+        intentFilter=new IntentFilter();
+        intentFilter.addAction("ihandy.com.a2014011300.LOCAL_BROADCAST");
+        myBroadcastReceiver=new MyBroadcastReceiver();
+        myBroadcastReceiver.set_List_Map(favoritesList,newsMap);
+        localBroadcastManager.registerReceiver(myBroadcastReceiver,intentFilter);*/
     }
 
     public void initCate()
@@ -137,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
             NewsListFragment tmp=new NewsListFragment();
             tmp.setNewsList(newsMap.get(watchedCateList.get(i)));
             tmp.setFavoriteList(favoritesList);
+            tmp.setCategory(watchedCateList.get(i));
             //Log.d("newsList "+i,newsList.get(i).get(0).getCategory());
             newsFragmentList.add(tmp);
             fragmentList.add(newsFragmentList.get(i));
@@ -182,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data)
     {
+        Log.d("Intent","get "+requestCode);
         switch (requestCode)
         {
             //change the category
@@ -194,38 +206,39 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             //update favorites
-            case 2:
-                if(requestCode==RESULT_OK)
+            default:
+                if(resultCode==RESULT_OK)
                 {
+                    Log.d("Intent","get "+2);
+                    String cate=data.getStringExtra("category");
+                    int pos=data.getIntExtra("position", 0);
+                    boolean isFavorite=data.getBooleanExtra("favorite",false);
+                    Log.d("Intent",cate+" "+pos);
+                    News tmp=newsMap.get(cate).get(pos);
+                    //Log.d("Intent"," here");
+                    if(isFavorite)
+                    {
+                        if(!favoritesList.contains(tmp))
+                        {
+                            favoritesList.add(tmp);
+                        }
+                    }
+                    else
+                    {
+                        if(favoritesList.contains(tmp))
+                        {
+                            favoritesList.remove(tmp);
+                        }
+                    }
 
+                    for(News i:favoritesList)
+                    {
+                        Log.d("fav",i.getTitle());
+                    }
                 }
-            default:
+                Log.d("Intent"," ok");
                 break;
         }
     }
-
- /*   @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        String str="test data";
-        switch (item.getItemId())
-        {
-            case R.id.option1:
-                Intent intent = new Intent(MainActivity.this,Option1Activity.class);
-                intent.putExtra("extra data",str);
-                startActivity(intent);
-                break;
-            case R.id.option2:
-                Toast.makeText(this,"option 2",Toast.LENGTH_SHORT).show();
-                break;
-            default:
-        }
-        return true;
-    }*/
 
 }

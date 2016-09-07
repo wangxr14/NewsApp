@@ -3,6 +3,7 @@ package ihandy.com.a2014011300;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +21,16 @@ public class NewsListFragment extends Fragment implements AdapterView.OnItemClic
     private List<News> newsList;
     private NewsAdapter adapter;
     private ArrayList<News> favoriteList;
+    private String category;
 
     public void setNewsList(List<News> newsList)
     {
         this.newsList=newsList;
     }
     public void setFavoriteList(ArrayList<News> favoriteList){this.favoriteList=favoriteList;}
+    public void setCategory(String category){
+        this.category=category;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -44,11 +49,15 @@ public class NewsListFragment extends Fragment implements AdapterView.OnItemClic
         //String data = tmp.getNewsID() + ".html";
         String data =tmp.getSource_url();
         Intent intent = new Intent(getActivity(),ShowPageActivity.class);
+        Log.d("activiry", getActivity().toString());
         intent.putExtra("filename", data);
         boolean isFavorite=favoriteList.contains(tmp);
         intent.putExtra("favorite",isFavorite);
-
-        startActivityForResult(intent,2);
+        intent.putExtra("category",category);
+        intent.putExtra("position",position);
+        Log.d("Intent", category + " " + position);
+        Log.d("intent","sent to show!");
+        startActivityForResult(intent, 2);
     }
 
 }
