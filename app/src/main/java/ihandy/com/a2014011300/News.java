@@ -10,6 +10,16 @@ public class News {
     private String origin;
     private String source_url;
     private String image_url;
+    private int isMyFavorite=0;
+
+    public static final String TABLE="NEWSDATA";
+    public static final String KEY_ID="id";
+    public static final String KEY_title="title";
+    public static final String KEY_category="category";
+    public static final String KEY_origin="origin";
+    public static final String KEY_source_url="sourceURL";
+    public static final String KEY_image_url="imageURL";
+    public static final String KEY_FAVORITE="isFavorite";
 
     public News(long news_ID,String title, String category, String origin,String source_url,String image_url) {
         this.news_ID=news_ID;
@@ -55,5 +65,15 @@ public class News {
     }
     public String getImage_url() {
         return image_url;
+    }
+    public void setFavorite(int favorite)
+    {
+        if(favorite>0)
+            isMyFavorite=1;
+        else
+            isMyFavorite=0;
+    }
+    public int isFavorite(){
+        return isMyFavorite;
     }
 }

@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private Map<String,ArrayList<News>> newsMap=new HashMap<String,ArrayList<News>>();
     private ArrayList<String> categoryList=new ArrayList<String>();
     private ArrayList<String> watchedCateList=new ArrayList<String>();
-    private ArrayList<String> unwatchedCateList=new ArrayList<String>();
     private ArrayList<News> favoritesList=new ArrayList<News>();
 
     private Toolbar toolbar;
@@ -53,27 +52,30 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<NewsListFragment> newsFragmentList;
     private ArrayList<Fragment> fragmentList;
     //public FragmentManager fManager;
-    private IntentFilter intentFilter;
-    private MyBroadcastReceiver myBroadcastReceiver;
-    private LocalBroadcastManager localBroadcastManager;
+    private MyDataDealer myDataDealer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
         //getSupportActionBar().hide();
         toolbar= (Toolbar) findViewById(R.id.toolbar_main);
-
         setSupportActionBar(toolbar);
+
+        myDataDealer=new MyDataDealer(this);
         //init the categories and news
         initCate();
         initLists();
         Log.d("progress:", "init News");
         initNews();
+        if(categoryList.size()==0)//没网的情况
+        {
+            loadDataFromSQL();
+        }
         //get the tabLayout
         setTabLayout();
         setViewPage();
         setDrawer();
-        Log.d("activity",MainActivity.this.toString());
         //
        /* localBroadcastManager=LocalBroadcastManager.getInstance(this);
         intentFilter=new IntentFilter();
@@ -118,6 +120,47 @@ public class MainActivity extends AppCompatActivity {
             newsMap.put(categoryList.get(i), myThread.getNewsList());
         }
 
+    }
+
+    public void loadDataFromSQL()
+    {
+        Log.d("load","start");
+        //读出四个列表
+        categoryList=myDataDealer.getCateList();
+        Log.d("load","category");
+        Log.d("size",""+categoryList.size());
+        watchedCateList=myDataDealer.getWatchedList();
+        Log.d("load","watched");
+        newsMap=myDataDealer.getNewsMap(categoryList);
+        Log.d("load","news map");
+        favoritesList=myDataDealer.getFavoriteList();
+        Log.d("load","favorite");
+        Log.d("load","done");
+    }
+    public void saveDataToSQL()
+    {
+        myDataDealer.clearTable();
+        //save category
+        for(int i=0;i<categoryList.size();i++)
+        {
+            if(watchedCateList.contains(categoryList.get(i)))
+            {
+                myDataDealer.insert_category(categoryList.get(i),1);
+            }
+            else myDataDealer.insert_category(categoryList.get(i),0);
+        }
+        //save news
+        Iterator<Map.Entry<String, ArrayList<News>>> it = newsMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, ArrayList<News>> entry = it.next();
+            Log.d("key",entry.getKey());
+            ArrayList<News> tmp=entry.getValue();
+            for(int i=0;i<tmp.size();i++)
+            {
+                myDataDealer.insert_news(tmp.get(i));
+            }
+            Log.d("save "+entry.getKey(),""+tmp.size());
+        }
     }
 
     public void setTabLayout()
@@ -193,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data)
     {
-        Log.d("Intent","get "+requestCode);
+        Log.d("Intent", "get " + requestCode);
         switch (requestCode)
         {
             //change the category
@@ -212,12 +255,14 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("Intent","get "+2);
                     String cate=data.getStringExtra("category");
                     int pos=data.getIntExtra("position", 0);
-                    boolean isFavorite=data.getBooleanExtra("favorite",false);
+                    boolean isFavorite=data.getBooleanExtra("favorite", false);
                     Log.d("Intent",cate+" "+pos);
                     News tmp=newsMap.get(cate).get(pos);
+
                     //Log.d("Intent"," here");
                     if(isFavorite)
                     {
+                        tmp.setFavorite(1);
                         if(!favoritesList.contains(tmp))
                         {
                             favoritesList.add(tmp);
@@ -225,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
+                        tmp.setFavorite(0);
                         if(favoritesList.contains(tmp))
                         {
                             favoritesList.remove(tmp);
@@ -241,4 +287,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        saveDataToSQL();
+        Log.d("finish","ok");
+    }
 }
+

@@ -25,7 +25,7 @@ public class ShowPageActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent=getIntent();
-        String filename=intent.getStringExtra("filename");
+        final String filename=intent.getStringExtra("filename");
         isFavorite=intent.getBooleanExtra("favorite",false);
         category=intent.getStringExtra("category");
         position=intent.getIntExtra("position",0);
@@ -40,6 +40,12 @@ public class ShowPageActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.action_share:
+                        Intent intent=new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/*");
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+                        intent.putExtra(Intent.EXTRA_TEXT, "Big News From Clout! "+filename);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(Intent.createChooser(intent, getTitle()));
                         break;
                     case R.id.action_favorite:
 

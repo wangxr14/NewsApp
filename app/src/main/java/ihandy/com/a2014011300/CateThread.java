@@ -19,7 +19,7 @@ import java.util.List;
  * Created by ok on 2016/9/4.
  */
 public class CateThread extends Thread {
-    private ArrayList<String> categoryList=new ArrayList<String>();
+    private ArrayList<String> categoryList=new ArrayList<String>();;
 
     public ArrayList<String> getCategoryList()
     {
@@ -40,6 +40,7 @@ public class CateThread extends Thread {
             connection.setRequestMethod("GET");
             if(connection.getResponseCode()==200)
             {
+
                 InputStream is = connection.getInputStream(); // 获取输入流
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
