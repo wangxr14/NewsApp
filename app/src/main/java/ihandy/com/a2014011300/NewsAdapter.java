@@ -56,10 +56,7 @@ public class NewsAdapter extends ArrayAdapter<News>{
 
         newsContent.setText(news.getTitle());
         newsOrigin.setText(news.getOrigin());
-        Picasso
-                .with(context)
-                .load(news.getImage_url())
-                .into(newsImg);
+        Picasso.with(context).load(news.getImage_url()).into(newsImg);
         /*try {
             FileInputStream fileInputStream=getContext().openFileInput(newsID+".png");
             bitmap=BitmapFactory.decodeStream(fileInputStream);

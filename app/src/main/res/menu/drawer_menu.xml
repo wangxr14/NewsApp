@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/drawer_favorite_Item01"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_forward_black_24dp"
         android:title="Favorites" />
     <item
         android:id="@+id/drawer_set_cate_Item02"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_forward_black_24dp"
         android:title="Set Categories" />
     <item
         android:id="@+id/drawer_about_Item03"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_forward_black_24dp"
         android:title="About" />
 </menu>
