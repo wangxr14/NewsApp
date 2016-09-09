@@ -29,7 +29,6 @@ public class CateThread extends Thread {
     public void run()
     {
         long time=System.currentTimeMillis();
-        Log.d("time:", "" + time);
         String categoryURL="http://assignment.crazz.cn/news/en/category?timestamp="+time;
         //String categoryURL="http://assignment.crazz.cn/news/en/category?timestamp=11111111111";
         Log.d("network",categoryURL);
@@ -58,12 +57,6 @@ public class CateThread extends Thread {
                 JSONObject cateObject=dataObject.getJSONObject("categories");
                // JSONArray cateObject=dataObject.getJSONArray("categories");
                 Log.d("cate:", dataObject.toString());
-               /* for(int i=0;i<cateObject.length();i++)
-                {
-                    String key=cateObject.getString(i);
-                    Log.d("key:", key);
-                    categoryList.add(key);
-                }*/
                 Iterator<String> iterator = cateObject.keys();
                 String key = null;
                 String value = null;
@@ -74,7 +67,6 @@ public class CateThread extends Thread {
                     Log.d("category:", value);
                     categoryList.add(key);
                 }
-
             }
             else
             {

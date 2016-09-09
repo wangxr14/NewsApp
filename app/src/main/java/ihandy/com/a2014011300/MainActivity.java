@@ -92,18 +92,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
+        Log.d("load","watched size "+watchedCateList.size());
+        for(int i=0;i<watchedCateList.size();i++)
+        {
+            Log.d("load","watched "+watchedCateList.get(i));
+        }
         //get the tabLayout
         setTabLayout();
         setViewPage();
         setDrawer();
-        //
-       /* localBroadcastManager=LocalBroadcastManager.getInstance(this);
-        intentFilter=new IntentFilter();
-        intentFilter.addAction("ihandy.com.a2014011300.LOCAL_BROADCAST");
-        myBroadcastReceiver=new MyBroadcastReceiver();
-        myBroadcastReceiver.set_List_Map(favoritesList,newsMap);
-        localBroadcastManager.registerReceiver(myBroadcastReceiver,intentFilter);*/
     }
 
     public void initCate()
@@ -340,9 +337,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy()
     {
-        super.onDestroy();
+
         saveDataToSQL();
         Log.d("finish","ok");
+        super.onDestroy();
     }
 
     public void printNewsMap()
