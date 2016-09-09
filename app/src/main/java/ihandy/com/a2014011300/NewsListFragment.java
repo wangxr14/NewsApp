@@ -46,18 +46,14 @@ public class NewsListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view,int position,long id){
         News tmp = newsList.get(position);
-        //String data = tmp.getNewsID() + ".html";
-        String data =tmp.getSource_url();
         Intent intent = new Intent(getActivity(),ShowPageActivity.class);
-        Log.d("activiry", getActivity().toString());
-        intent.putExtra("filename", data);
-        boolean isFavorite=favoriteList.contains(tmp);
-        intent.putExtra("favorite",isFavorite);
-        intent.putExtra("category",category);
-        intent.putExtra("position",position);
+        Log.d("activity", "mainActivity");
+        Log.d("Intent", "main fragment  over  fav "+tmp.isFavorite());
+        intent.putExtra("news", tmp);
+        intent.putExtra("activity","mainActivity");
         Log.d("Intent", category + " " + position);
         Log.d("intent","sent to show!");
-        startActivityForResult(intent, 2);
+        getActivity().startActivityForResult(intent, 2);
     }
 
 }

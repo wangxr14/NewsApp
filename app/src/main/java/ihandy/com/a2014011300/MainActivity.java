@@ -72,6 +72,27 @@ public class MainActivity extends AppCompatActivity {
         {
             loadDataFromSQL();
         }
+        else {
+            watchedCateList = myDataDealer.getWatchedList();
+            Log.d("load", "watched");
+            favoritesList = myDataDealer.getFavoriteList();
+            for (int i = 0; i < favoritesList.size(); i++)//update the isFavorite in newsMap
+            {
+                ArrayList<News> tmpList=newsMap.get(favoritesList.get(i).getCategory());
+                int pos=0;
+                for(int j=0;j<tmpList.size();j++)
+                {
+                    if(favoritesList.get(i).getNewsID()==tmpList.get(j).getNewsID())
+                    {
+                        pos=j;
+                        newsMap.get(favoritesList.get(i).getCategory()).get(j).setFavorite(1);
+                        Log.d("set favorite",newsMap.get(favoritesList.get(i).getCategory()).get(j).isFavorite()+" "+j+" "+ favoritesList.get(i).getCategory());
+                        break;
+                    }
+                }
+            }
+        }
+
         //get the tabLayout
         setTabLayout();
         setViewPage();
@@ -128,12 +149,12 @@ public class MainActivity extends AppCompatActivity {
         //读出四个列表
         categoryList=myDataDealer.getCateList();
         Log.d("load","category");
-        Log.d("size",""+categoryList.size());
-        watchedCateList=myDataDealer.getWatchedList();
-        Log.d("load","watched");
+        Log.d("size", "" + categoryList.size());
+        watchedCateList = myDataDealer.getWatchedList();
+        Log.d("load", "watched");
         newsMap=myDataDealer.getNewsMap(categoryList);
         Log.d("load","news map");
-        favoritesList=myDataDealer.getFavoriteList();
+        favoritesList = myDataDealer.getFavoriteList();
         Log.d("load","favorite");
         Log.d("load","done");
     }
@@ -212,7 +233,16 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.drawer_favorite_Item01:
-
+                        Intent intent1 = new Intent(MainActivity.this, FavoritePageActivity.class);
+                        intent1.putExtra("favorites", favoritesList);
+                        intent1.putExtra("categoryList", categoryList);
+                        Iterator<Map.Entry<String, ArrayList<News>>> it = newsMap.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry<String, ArrayList<News>> entry = it.next();
+                            ArrayList<News> tmp = entry.getValue();
+                            intent1.putExtra(entry.getKey(), tmp);
+                        }
+                        startActivityForResult(intent1, 3);
                         break;
                     case R.id.drawer_set_cate_Item02:
                         Intent intent2 = new Intent(MainActivity.this, SetCategoryActivity.class);
@@ -236,56 +266,76 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data)
     {
-        Log.d("Intent", "get " + requestCode);
-        switch (requestCode)
-        {
-            //change the category
-            case 1:
-                if(resultCode==RESULT_OK)
-                {
-                    this.watchedCateList=data.getStringArrayListExtra("watchedList");
-                    setTabLayout();
-                    setViewPage();
-                }
-                break;
-            //update favorites
-            default:
-                if(resultCode==RESULT_OK)
-                {
-                    Log.d("Intent","get "+2);
-                    String cate=data.getStringExtra("category");
-                    int pos=data.getIntExtra("position", 0);
-                    boolean isFavorite=data.getBooleanExtra("favorite", false);
-                    Log.d("Intent",cate+" "+pos);
-                    News tmp=newsMap.get(cate).get(pos);
-
-                    //Log.d("Intent"," here");
-                    if(isFavorite)
-                    {
-                        tmp.setFavorite(1);
-                        if(!favoritesList.contains(tmp))
-                        {
-                            favoritesList.add(tmp);
+        if(resultCode != RESULT_CANCELED){
+            Log.d("Intent", "get " + requestCode);
+            switch (requestCode) {
+                //change the category
+                case 1:
+                    if (resultCode == RESULT_OK) {
+                        this.watchedCateList = data.getStringArrayListExtra("watchedList");
+                        setTabLayout();
+                        setViewPage();
+                    }
+                    break;
+                //update favorites
+                case 2:
+                    if (resultCode == RESULT_OK) {
+                        News tmp = (News)data.getSerializableExtra("news");
+                        //find this news in newsmap
+                        ArrayList<News> tmpList = newsMap.get(tmp.getCategory());
+                        Log.d("Intent", "get " + requestCode + " get tmplist");
+                        Log.d("Intent", "get " + requestCode + " get tmplist size "+tmpList.size());
+                        int pos = 0;
+                        for (int i = 0; i < tmpList.size(); i++) {
+                            if (tmpList.get(i).getNewsID() == tmp.getNewsID()) {
+                                pos = i;
+                                break;
+                            }
                         }
-                    }
-                    else
-                    {
-                        tmp.setFavorite(0);
-                        if(favoritesList.contains(tmp))
+                        Log.d("Intent", "get " + requestCode + " get pos " + pos);
+                        newsMap.get(tmp.getCategory()).get(pos).setFavorite(tmp.isFavorite());
+                        boolean flag=false;//mark if in the list
+                        for (int i =0;i<favoritesList.size();i++)
                         {
-                            favoritesList.remove(tmp);
+                            if(favoritesList.get(i).getNewsID()==tmp.getNewsID())//is in favoriteList
+                            {
+                                flag=true;
+                                if(tmp.isFavorite()==0)
+                                {
+                                    favoritesList.remove(i);
+                                }
+                            }
                         }
-                    }
+                        if(!flag)
+                        {
+                            if(tmp.isFavorite()==1)
+                            {
+                                favoritesList.add(tmp);
+                            }
+                        }
 
-                    for(News i:favoritesList)
-                    {
-                        Log.d("fav",i.getTitle());
+
                     }
-                }
-                Log.d("Intent"," ok");
-                break;
+                    Log.d("Intent", " ok");
+                    break;
+                case 3:
+                    Log.d("get intent", "3");
+                    favoritesList = (ArrayList<News>) data.getSerializableExtra("favorites");
+                    newsMap.clear();
+                    for (int i = 0; i < categoryList.size(); i++) {
+                        ArrayList<News> tmp = (ArrayList<News>) data.getSerializableExtra(categoryList.get(i));
+                        newsMap.put(categoryList.get(i), tmp);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            //printNewsMap();
+            //setTabLayout();
+            setViewPage();
         }
     }
+
 
     @Override
     public void onDestroy()
@@ -293,6 +343,23 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         saveDataToSQL();
         Log.d("finish","ok");
+    }
+
+    public void printNewsMap()
+    {
+        Iterator<Map.Entry<String, ArrayList<News>>> it = newsMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, ArrayList<News>> entry = it.next();
+            ArrayList<News> tmp=entry.getValue();
+            Log.d("newsMap","category "+entry.getKey());
+            for (News i : tmp) {
+                Log.d("newsMap", i.getTitle()+" is fav "+i.isFavorite() );
+            }
+        }
+
+        for (int i =0;i<favoritesList.size();i++) {
+            Log.d("favorite list", favoritesList.get(i).getTitle()+" is fav "+favoritesList.get(i).isFavorite() );
+        }
     }
 }
 

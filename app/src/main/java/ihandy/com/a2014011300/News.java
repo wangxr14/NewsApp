@@ -1,9 +1,14 @@
 package ihandy.com.a2014011300;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by ok on 2016/9/3.
  */
-public class News {
+public class News implements Serializable {
     private long news_ID;
     private String title;
     private String category;
@@ -29,7 +34,15 @@ public class News {
         this.source_url=source_url;
         this.image_url = image_url;
     }
-
+    public News(long news_ID,String title, String category, String origin,String source_url,String image_url,int isMyFavorite) {
+        this.news_ID=news_ID;
+        this.title = title;
+        this.category = category;
+        this.origin=origin;
+        this.source_url=source_url;
+        this.image_url = image_url;
+        this.isMyFavorite=isMyFavorite;
+    }
     public void setNews_ID(long news_ID){
         this.news_ID=news_ID;
     }
@@ -76,4 +89,5 @@ public class News {
     public int isFavorite(){
         return isMyFavorite;
     }
+
 }

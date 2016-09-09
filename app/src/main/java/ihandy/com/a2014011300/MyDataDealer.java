@@ -81,7 +81,7 @@ public class MyDataDealer {
         SQLiteDatabase db = myDatabaseHelper.getReadableDatabase();
         Cursor cursor=db.query(News.TABLE, new String[]{News.KEY_ID,News.KEY_title,News.KEY_category,
                         News.KEY_origin,News.KEY_source_url,News.KEY_image_url,News.KEY_FAVORITE},
-                News.KEY_category+"=?", new String[]{cate}, null,null, null);
+                News.KEY_category+"=?", new String[]{cate}, null, null,News.KEY_ID+" desc");
         while (cursor.moveToNext()) {
             long id=cursor.getLong(0);
             String title=cursor.getString(1);
@@ -89,7 +89,7 @@ public class MyDataDealer {
             String sourceurl=cursor.getString(4);
             String imgurl=cursor.getString(5);
             int isFavorite=cursor.getInt(6);
-            News news=new News(id,title,cate,origin,sourceurl,imgurl);
+            News news=new News(id,title,cate,origin,sourceurl,imgurl,isFavorite);
             newsList.add(news);
         }
         cursor.close();
@@ -116,7 +116,7 @@ public class MyDataDealer {
         SQLiteDatabase db = myDatabaseHelper.getReadableDatabase();
         Cursor cursor=db.query(News.TABLE, new String[]{News.KEY_ID,News.KEY_title,News.KEY_category,
                         News.KEY_origin,News.KEY_source_url,News.KEY_image_url,News.KEY_FAVORITE},
-                News.KEY_FAVORITE+"=?", new String[]{"1"}, null, null, null);
+                News.KEY_FAVORITE+"=?", new String[]{"1"}, null, null, News.KEY_ID+" desc");
         while (cursor.moveToNext()) {
             long id=cursor.getLong(0);
             String title=cursor.getString(1);
@@ -125,7 +125,7 @@ public class MyDataDealer {
             String sourceurl=cursor.getString(4);
             String imgurl=cursor.getString(5);
             int isFavorite=cursor.getInt(6);
-            News news=new News(id,title,cate,origin,sourceurl,imgurl);
+            News news=new News(id,title,cate,origin,sourceurl,imgurl,isFavorite);
             favoriteList.add(news);
         }
         cursor.close();

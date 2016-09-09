@@ -63,7 +63,7 @@ public class NewsThread extends Thread{
                 String json = new String(data); // 把字符串组转换成字符串
                 JSONObject jsonObject = new JSONObject(json);
                 JSONObject dataObject = jsonObject.getJSONObject("data");
-                Log.d("progress:","get News" );
+                Log.d("progress:","get News " +category);
                 JSONArray newsObject=dataObject.getJSONArray("news");
                 //Log.d("news size:", ""+newsObject.length());
                 //Log.d("news content",newsObject.toString());
@@ -76,6 +76,7 @@ public class NewsThread extends Thread{
                     String title=jsonObject.getString("title");
                     //Log.d("title "+i,title);
                     String cate=jsonObject.getString("category");
+                    cate=category;
                     String origin=jsonObject.getString("origin");
                     //Log.d("origin "+i,origin);
                     String sourceURL=jsonObject.getJSONObject("source").getString("url");

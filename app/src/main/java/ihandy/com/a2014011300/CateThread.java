@@ -32,15 +32,16 @@ public class CateThread extends Thread {
         Log.d("time:", "" + time);
         String categoryURL="http://assignment.crazz.cn/news/en/category?timestamp="+time;
         //String categoryURL="http://assignment.crazz.cn/news/en/category?timestamp=11111111111";
-
+        Log.d("network",categoryURL);
         try {
             URL url=new URL(categoryURL);
             HttpURLConnection connection=(HttpURLConnection) url.openConnection();
-            Log.d("time2:", "" + time);
             connection.setRequestMethod("GET");
+            int x=connection.getResponseCode();
+            Log.d("network",x+"");
             if(connection.getResponseCode()==200)
             {
-
+                Log.d("time2:", "" + time);
                 InputStream is = connection.getInputStream(); // 获取输入流
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -74,7 +75,10 @@ public class CateThread extends Thread {
                     categoryList.add(key);
                 }
 
-
+            }
+            else
+            {
+                Log.d("network","not ok");
             }
         } catch (IOException e) {
             e.printStackTrace();
